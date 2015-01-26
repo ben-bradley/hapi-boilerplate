@@ -10,5 +10,5 @@ One day, in the future, I may turn this into a Yeoman generator, but until then,
 $ git clone https://github.com/ben-bradley/hapi-boilerplate
 $ mv hapi-boilerplate myHapiApp
 $ cd myHapiApp
-$ git branch -d myHapiApp
+$ git checkout -b myHapiApp
 ```
