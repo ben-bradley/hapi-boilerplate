@@ -1,7 +1,9 @@
 var Hapi = require('hapi'),
   config = require('config'),
   Lout = require('lout'),
-  glob = require('glob');
+  glob = require('glob'),
+  Good = require('good'),
+  GoodFile = require('good-file');
 
 var server = new Hapi.Server();
 
@@ -17,6 +19,8 @@ server.connection({
 
 server.app.config = config;
 
+var reporters = [];
+
 glob.sync('./plugins/*/index.js').forEach(function (file) {
   var plugin = require(file);
   server.register({
@@ -24,7 +28,15 @@ glob.sync('./plugins/*/index.js').forEach(function (file) {
   }, function (err) {
     if (err)
       throw new Error(err);
-    console.log('Plugin loaded: ' + plugin.register.attributes.pkg.name);
+    var name = plugin.register.attributes.pkg.name;
+    reporters.push({
+      reporter: GoodFile,
+      args: [
+        __dirname + '/logs/plugins/' + name +'.log',
+        { log: ['plugins', name] }
+      ]
+    });
+    console.log('Plugin loaded: ' + name);
   });
 });
 
@@ -34,6 +46,18 @@ server.register({
   if (err)
     throw new Error(err);
   console.log('Plugin loaded: Lout');
+});
+
+server.register({
+  register: Good,
+  options: {
+    opsInterval: 1000,
+    reporters: reporters
+  }
+}, function (err) {
+  if (err)
+    throw new Error(err);
+  console.log('Plugin loaded: Good');
 });
 
 server.start(function (err) {
