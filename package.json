@@ -4,7 +4,8 @@
   "description": "A simple boiler plate repo of a Hapi server to make life a little easier",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "NODE_ENV=test mocha -R spec",
+    "install": "ls -d plugins/* | while read DIR; do cd $DIR; echo \"installing: $DIR\"; npm install; cd ../..; done"
   },
   "author": "Ben Bradley",
   "license": "MIT",
@@ -17,5 +18,10 @@
     "boom": "^2.6.1",
     "good-file": "^4.0.2",
     "good": "^5.1.1"
+  },
+  "devDependencies": {
+    "should": "^5.0.0",
+    "supertest": "^0.15.0",
+    "mocha": "^2.1.0"
   }
 }

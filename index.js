@@ -32,11 +32,14 @@ glob.sync('./plugins/*/index.js').forEach(function (file) {
     reporters.push({
       reporter: GoodFile,
       args: [
-        __dirname + '/logs/plugins/' + name +'.log',
-        { log: ['plugins', name] }
+        __dirname + '/logs/plugins/' + name + '.log',
+        {
+          log: ['plugins', name]
+        }
       ]
     });
-    console.log('Plugin loaded: ' + name);
+    if (!config.test)
+      console.log('Plugin loaded: ' + name);
   });
 });
 
@@ -45,7 +48,8 @@ server.register({
 }, function (err) {
   if (err)
     throw new Error(err);
-  console.log('Plugin loaded: Lout');
+  if (!config.test)
+    console.log('Plugin loaded: Lout');
 });
 
 server.register({
@@ -57,17 +61,21 @@ server.register({
 }, function (err) {
   if (err)
     throw new Error(err);
-  console.log('Plugin loaded: Good');
+  if (!config.test)
+    console.log('Plugin loaded: Good');
 });
 
-server.start(function (err) {
-  if (err)
-    throw new Error(err);
-  console.log('Server started!');
-  server.connections.forEach(function (cn) {
-    console.log({
-      labels: cn.settings.labels,
-      uri: cn.info.uri
+if (!config.test)
+  server.start(function (err) {
+    if (err)
+      throw new Error(err);
+    console.log('Server started!');
+    server.connections.forEach(function (cn) {
+      console.log({
+        labels: cn.settings.labels,
+        uri: cn.info.uri
+      });
     });
   });
-});
+
+module.exports = server;
