@@ -1,5 +1,5 @@
 {
-  "name": "skunkworks",
+  "name": "hapi-boilerplate",
   "version": "0.0.1",
   "description": "A simple boiler plate repo of a Hapi server to make life a little easier",
   "main": "index.js",
