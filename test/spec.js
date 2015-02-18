@@ -4,17 +4,24 @@ var should = require('should'),
 
 var server = require('..');
 
-var API = request('http://localhost:' + config.api_port),
-  UI = request('http://localhost:' + config.ui_port);
+var API = request('http://localhost:' + config.api_port), // for calls to the API
+  UI = request('http://localhost:' + config.ui_port); // for calls to the UI
 
 describe('Your App', function () {
 
   describe('The API', function () {
 
+    // start the server for each test
     beforeEach(function(done) {
       server.start(done);
     });
 
+    // drop the server after each test
+    afterEach(function(done) {
+      server.stop(done);
+    });
+
+    // This is what a test should/can look like
     it('GET /loopback should return data', function (done) {
       API.get('/loopback')
         .expect(200)

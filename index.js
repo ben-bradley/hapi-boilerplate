@@ -1,26 +1,30 @@
-var Hapi = require('hapi'),
-  config = require('config'),
-  Lout = require('lout'),
-  glob = require('glob'),
-  Good = require('good'),
+var Hapi = require('hapi'), // for reasons
+  config = require('config'), // for app config
+  glob = require('glob'), // for dynamically reading plugins
+  Lout = require('lout'), // for API documentation
+  Good = require('good'), // for logging
   GoodFile = require('good-file');
 
 var server = new Hapi.Server();
 
+// init the API
 server.connection({
   port: config.api_port,
   labels: ['api']
 });
 
+// init the UI
 server.connection({
   port: config.ui_port,
   labels: ['ui']
 });
 
+// store the config for reference
 server.app.config = config;
 
 var reporters = [];
 
+// register each plugin and configure a Good reporter for each
 glob.sync('./plugins/*/index.js').forEach(function (file) {
   var plugin = require(file);
   server.register({
@@ -32,8 +36,7 @@ glob.sync('./plugins/*/index.js').forEach(function (file) {
     reporters.push({
       reporter: GoodFile,
       args: [
-        __dirname + '/logs/plugins/' + name + '.log',
-        {
+        __dirname + '/logs/plugins/' + name + '.log', {
           log: ['plugins', name]
         }
       ]
@@ -43,6 +46,7 @@ glob.sync('./plugins/*/index.js').forEach(function (file) {
   });
 });
 
+// register Lout for the /docs routes
 server.register({
   register: Lout
 }, function (err) {
@@ -52,6 +56,7 @@ server.register({
     console.log('Plugin loaded: Lout');
 });
 
+// register Good for logging
 server.register({
   register: Good,
   options: {
@@ -65,8 +70,9 @@ server.register({
     console.log('Plugin loaded: Good');
 });
 
+// In every environment except test, fire up the server
 if (!config.test)
-  server.start(function (err) {
+  server.start(function (err) { // oink
     if (err)
       throw new Error(err);
     console.log('Server started!');
@@ -78,4 +84,5 @@ if (!config.test)
     });
   });
 
+// Export the server for testing
 module.exports = server;
