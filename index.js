@@ -6,6 +6,15 @@ var Hapi = require('hapi'), // for reasons
   Good = require('good'), // for logging
   GoodFile = require('good-file');
 
+// load the config files in each plugin
+var ENV = process.env.NODE_ENV || 'default';
+glob.sync('./plugins/*/config/'+ENV+'.json').forEach(function(file) {
+  var pluginConfig = require(file);
+  if (Object.keys(pluginConfig).length !== 1)
+    throw new Error('Plugin config must have 1 top-level property: ' + file);
+  config.util.extendDeep(config, pluginConfig);
+});
+
 var server = new Hapi.Server();
 
 // init the API

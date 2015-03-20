@@ -4,6 +4,9 @@ var properties = ['method', 'path', 'info', 'headers', 'payload', 'query'];
 
 module.exports.register = function(server, options, next) {
 
+  // config can be accessed like this
+  console.log(server.app.config.loopback.foo);
+
   // select the API server
   var api = server.select('api');
 
