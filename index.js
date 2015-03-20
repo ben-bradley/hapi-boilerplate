@@ -1,6 +1,7 @@
 var Hapi = require('hapi'), // for reasons
   config = require('config'), // for app config
   glob = require('glob'), // for dynamically reading plugins
+  args = require('argify'), // for command-line args
   Lout = require('lout'), // for API documentation
   Good = require('good'), // for logging
   GoodFile = require('good-file');
@@ -22,11 +23,24 @@ server.connection({
 // store the config for reference
 server.app.config = config;
 
+var excludes = (args.excludes) ? args.excludes.split(',') : false;
+var includes = (args.includes) ? args.includes.split(',') : false;
+
 var reporters = [];
 
 // register each plugin and configure a Good reporter for each
 glob.sync('./plugins/*/index.js').forEach(function (file) {
-  var plugin = require(file);
+  var plugin = require(file),
+    name = plugin.register.attributes.pkg.name;
+
+  if (includes && includes.indexOf(name) === -1) {
+    console.log('Plugin NOT loaded: ' + name);
+    return false;
+  } else if (excludes && excludes.indexOf(name) > -1) {
+    console.log('Plugin NOT loaded: ' + name);
+    return false
+  }
+
   server.register({
     register: plugin
   }, function (err) {
@@ -57,18 +71,19 @@ server.register({
 });
 
 // register Good for logging
-server.register({
-  register: Good,
-  options: {
-    opsInterval: 1000,
-    reporters: reporters
-  }
-}, function (err) {
-  if (err)
-    throw new Error(err);
-  if (!config.test)
-    console.log('Plugin loaded: Good');
-});
+if (reporters.length)
+  server.register({
+    register: Good,
+    options: {
+      opsInterval: 1000,
+      reporters: reporters
+    }
+  }, function (err) {
+    if (err)
+      throw new Error(err);
+    if (!config.test)
+      console.log('Plugin loaded: Good');
+  });
 
 // In every environment except test, fire up the server
 if (!config.test)
