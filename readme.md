@@ -12,3 +12,8 @@ $ mv hapi-boilerplate myHapiApp
 $ cd myHapiApp
 $ git checkout -b myHapiApp
 ```
+
+## Todo
+
+- build out gulpfile
+- build yeoman generator

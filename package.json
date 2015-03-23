@@ -21,8 +21,10 @@
     "argify": "0.0.2"
   },
   "devDependencies": {
+    "gulp": "^3.8.11",
+    "gulp-nodemon": "^2.0.2",
+    "mocha": "^2.1.0",
     "should": "^5.0.0",
-    "supertest": "^0.15.0",
-    "mocha": "^2.1.0"
+    "supertest": "^0.15.0"
   }
 }

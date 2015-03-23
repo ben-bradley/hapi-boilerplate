@@ -51,10 +51,13 @@ glob.sync('./plugins/*/index.js').forEach(function (file) {
   if (load)
     server.register({
       register: plugin
+    }, {
+      routes: {
+        prefix: '/' + name
+      }
     }, function (err) {
       if (err)
         throw new Error(err);
-      var name = plugin.register.attributes.pkg.name;
       reporters.push({
         reporter: GoodFile,
         args: [

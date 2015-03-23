@@ -5,7 +5,7 @@ var properties = ['method', 'path', 'info', 'headers', 'payload', 'query'];
 module.exports.register = function(server, options, next) {
 
   // config can be accessed like this
-  console.log(server.app.config.loopback.foo);
+//  console.log(server.app.config.loopback.foo);
 
   // select the API server
   var api = server.select('api');
@@ -13,7 +13,7 @@ module.exports.register = function(server, options, next) {
   // Add a route to the API
   api.route({
     method: '*', // all methods
-    path: '/loopback/{p*}', // all routes beginning with "/loopback"
+    path: '/{p*}', // all routes beginning with "/loopback"
     config: {
 
       // this is the fn that finally deals with the request
