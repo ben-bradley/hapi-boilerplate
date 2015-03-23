@@ -1,4 +1,5 @@
-var _ = require('lodash');
+var _ = require('lodash'),
+  Handlebars = require('handlebars');
 
 var properties = ['method', 'path', 'info', 'headers', 'payload', 'query'];
 
@@ -6,6 +7,29 @@ module.exports.register = function(server, options, next) {
 
   // config can be accessed like this
 //  console.log(server.app.config.loopback.foo);
+
+  var ui = server.select('ui');
+
+  ui.views({
+    engines: {
+      html: Handlebars
+    },
+    path: __dirname+ '/views'
+  });
+
+  ui.route({
+    method: 'get',
+    path: '/',
+    config: {
+      description: 'Serve the loopback index.html',
+      handler: function(request, reply) {
+        reply.view('index', {
+          title: 'Loopback UI',
+          someContent: 'This is templated content'
+        });
+      }
+    }
+  })
 
   // select the API server
   var api = server.select('api');

@@ -4,7 +4,11 @@ var gulp = require('gulp'),
 gulp.task('default', function() {
   nodemon({
     script: 'index.js',
+    args: process.argv.slice(2),
     ext: 'html js',
-    ignore: 'bower_components'
+    ignore: [
+      'plugins/ui/bower_components/*',
+      '*/node_modules/*'
+    ]
   });
 });
