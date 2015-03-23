@@ -8,7 +8,7 @@ var Hapi = require('hapi'), // for reasons
 
 // load the config files in each plugin
 var ENV = process.env.NODE_ENV || 'default';
-glob.sync('./plugins/*/config/'+ENV+'.json').forEach(function(file) {
+glob.sync('./plugins/*/config/' + ENV + '.json').forEach(function (file) {
   var pluginConfig = require(file);
   if (Object.keys(pluginConfig).length !== 1)
     throw new Error('Plugin config must have 1 top-level property: ' + file);
@@ -40,33 +40,34 @@ var reporters = [];
 // register each plugin and configure a Good reporter for each
 glob.sync('./plugins/*/index.js').forEach(function (file) {
   var plugin = require(file),
-    name = plugin.register.attributes.pkg.name;
+    name = plugin.register.attributes.pkg.name,
+    load = true;
 
-  if (includes && includes.indexOf(name) === -1) {
-    console.log('Plugin NOT loaded: ' + name);
-    return false;
-  } else if (excludes && excludes.indexOf(name) > -1) {
-    console.log('Plugin NOT loaded: ' + name);
-    return false
-  }
+  if (includes && includes.indexOf(name) === -1)
+    load = false;
+  else if (excludes && excludes.indexOf(name) > -1)
+    load = false;
 
-  server.register({
-    register: plugin
-  }, function (err) {
-    if (err)
-      throw new Error(err);
-    var name = plugin.register.attributes.pkg.name;
-    reporters.push({
-      reporter: GoodFile,
-      args: [
-        __dirname + '/logs/plugins/' + name + '.log', {
-          log: ['plugins', name]
-        }
-      ]
+  if (load)
+    server.register({
+      register: plugin
+    }, function (err) {
+      if (err)
+        throw new Error(err);
+      var name = plugin.register.attributes.pkg.name;
+      reporters.push({
+        reporter: GoodFile,
+        args: [
+          __dirname + '/logs/plugins/' + name + '.log', {
+            log: ['plugins', name]
+          }
+        ]
+      });
+      if (!config.test)
+        console.log('Plugin loaded: ' + name);
     });
-    if (!config.test)
-      console.log('Plugin loaded: ' + name);
-  });
+  else
+    console.log('Plugin NOT loaded: ' + name);
 });
 
 // register Lout for the /docs routes
