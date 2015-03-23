@@ -1,6 +1,6 @@
 module.exports.register = function (server, options, next) {
 
-  // select the API server
+  // select the UI server
   var ui = server.select('ui');
 
   ui.route({
