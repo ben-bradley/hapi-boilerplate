@@ -1,12 +1,13 @@
 var _ = require('lodash'),
   Handlebars = require('handlebars');
 
+var PATHS = {
+  dist: __dirname + '/dist'
+}
+
 var properties = ['method', 'path', 'info', 'headers', 'payload', 'query'];
 
 module.exports.register = function(server, options, next) {
-
-  // config can be accessed like this
-//  console.log(server.app.config.loopback.foo);
 
   var ui = server.select('ui');
 
@@ -14,22 +15,37 @@ module.exports.register = function(server, options, next) {
     engines: {
       html: Handlebars
     },
-    path: __dirname+ '/views'
+    path: PATHS.dist,
+    isCached: !server.app.config.development
   });
 
   ui.route({
     method: 'get',
-    path: '/',
+    path: '/', // ends up being "/loopback"
     config: {
       description: 'Serve the loopback index.html',
       handler: function(request, reply) {
         reply.view('index', {
           title: 'Loopback UI',
-          someContent: 'This is templated content'
+          someContent: 'This is templated content',
+          appFile: (server.app.config.development) ? 'app.js' : 'app.min.js'
         });
       }
     }
-  })
+  });
+
+  ui.route({
+    method: 'get',
+    path: '/{p*}',
+    config: {
+      description: 'Path to serve the loopback assets',
+      handler: {
+        directory: {
+          path: PATHS.dist
+        }
+      }
+    }
+  });
 
   // select the API server
   var api = server.select('api');

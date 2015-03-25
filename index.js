@@ -15,7 +15,16 @@ glob.sync('./plugins/*/config/' + ENV + '.json').forEach(function (file) {
   config.util.extendDeep(config, pluginConfig);
 });
 
-var server = new Hapi.Server();
+var server = new Hapi.Server({
+  connections: {
+    routes: {
+      cors: true
+    },
+    router: {
+      stripTrailingSlash: true
+    }
+  }
+});
 
 // init the API
 server.connection({
@@ -38,7 +47,7 @@ var includes = (args.includes) ? args.includes.split(',') : false;
 var reporters = [];
 
 // register each plugin and configure a Good reporter for each
-glob.sync('./plugins/*/index.js').forEach(function (file) {
+glob.sync(__dirname + '/plugins/*/index.js').forEach(function (file) {
   var plugin = require(file),
     name = plugin.register.attributes.pkg.name,
     load = true;
