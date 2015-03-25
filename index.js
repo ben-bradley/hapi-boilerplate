@@ -2,6 +2,7 @@ var Hapi = require('hapi'), // for reasons
   config = require('config'), // for app config
   glob = require('glob'), // for dynamically reading plugins
   args = require('argify'), // for command-line args
+  path = require('path'), //
   Lout = require('lout'), // for API documentation
   Good = require('good'), // for logging
   GoodFile = require('good-file');
@@ -49,7 +50,7 @@ var reporters = [];
 // register each plugin and configure a Good reporter for each
 glob.sync(__dirname + '/plugins/*/index.js').forEach(function (file) {
   var plugin = require(file),
-    name = plugin.register.attributes.pkg.name,
+    name = path.dirname(file).split('/').pop(),
     load = true;
 
   if (includes && includes.indexOf(name) === -1)
@@ -70,7 +71,7 @@ glob.sync(__dirname + '/plugins/*/index.js').forEach(function (file) {
       reporters.push({
         reporter: GoodFile,
         args: [
-          __dirname + '/logs/plugins/' + name + '.log', {
+          path.dirname(file) + '/logs/' + name + '.log', {
             log: ['plugins', name]
           }
         ]
