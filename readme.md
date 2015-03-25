@@ -15,5 +15,4 @@ $ git checkout -b myHapiApp
 
 ## Todo
 
-- build out gulpfile
 - build yeoman generator
