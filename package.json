@@ -24,6 +24,7 @@
   "devDependencies": {
     "browserify": "^9.0.3",
     "gulp": "^3.8.11",
+    "gulp-if": "^1.2.5",
     "gulp-nodemon": "^2.0.2",
     "gulp-rename": "^1.2.0",
     "gulp-sourcemaps": "^1.5.1",

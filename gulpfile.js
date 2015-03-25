@@ -10,26 +10,26 @@ var gulp = require('gulp'),
   reactify = require('reactify'),
   nodemon = require('gulp-nodemon'),
   rename = require('gulp-rename'),
-  uglify = require('gulp-uglify');
+  uglify = require('gulp-uglify'),
+  gulpif = require('gulp-if');
 
 gulp.task('default', ['html', 'bundle', 'nodemon']);
 
 var PATHS = {
   plugins: __dirname + '/plugins/*',
-  src: __dirname + '/plugins/*/src',
-  dist: __dirname + '/plugins/*/dist'
+  src: __dirname + '/plugins/*/ui/src',
+  dist: __dirname + '/plugins/*/ui/dist'
 }
 
+// Compile JSX into JS
 gulp.task('bundle', function () {
   glob.sync(PATHS.src + '/app.js').forEach(bundler);
 });
-
-// Compile JSX into JS
 function bundler(file) {
   var watchArgs = watchify.args;
   watchArgs.transform = [reactify];
   var Bundler = watchify(browserify(watchArgs));
-  var pluginRoot = path.dirname(file) + '/..';
+  var uiRoot = path.dirname(file) + '/..';
   Bundler.add(file);
 
   function bundle() {
@@ -37,38 +37,37 @@ function bundler(file) {
     return Bundler.bundle()
       .on('error', gutil.log.bind(gutil, 'Browserify Error'))
       .pipe(source('app.js'))
-      .pipe(gulp.dest(pluginRoot + '/dist'));
+      .pipe(gulp.dest(uiRoot + '/dist'));
   };
   Bundler.on('update', bundle);
   bundle();
 }
 
+// Copy an HTML file into /dist
 gulp.task('html', function () {
   glob.sync(PATHS.src + '/*.html').forEach(html);
 });
-
-// Copy an HTML file into /dist
 function html(file) {
-  var pluginRoot = path.dirname(file) + '/..';
+  var uiRoot = path.dirname(file) + '/..';
   gulp.src(file)
-    .pipe(gulp.dest(pluginRoot + '/dist'));
+    .pipe(gulp.dest(uiRoot + '/dist'));
 }
 
+// Uglify/min a .js file
 gulp.task('uglify', function () {
   glob.sync(PATHS.dist + '/app.js').forEach(min);
 });
-
-// Uglify/min a .js file
 function min(file) {
-  var pluginRoot = path.dirname(file) + '/..';
+  var uiRoot = path.dirname(file) + '/..';
   gulp.src(file)
     .pipe(uglify())
     .pipe(rename(function (path) {
       path.basename += '.min';
     }))
-    .pipe(gulp.dest(pluginRoot + '/dist'));
+    .pipe(gulp.dest(uiRoot + '/dist'));
 }
 
+// Monitor the app
 gulp.task('nodemon', function () {
   // watch for new HTMLs and publish them
   gulp.watch(PATHS.src + '/*.html', function (ev) {

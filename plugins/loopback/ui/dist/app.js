@@ -5,7 +5,8 @@ React.render(React.createElement(AComponent, null), document.getElementById('app
 
 
 },{"./components/aComponent":2}],2:[function(require,module,exports){
-var AnotherComponent = require('./anotherComponent');
+var AnotherComponent = require('./anotherComponent'),
+  APIComponent = require('./apiComponent');
 
 var AComponent = React.createClass({displayName: "AComponent",
   render: function() {
@@ -13,7 +14,8 @@ var AComponent = React.createClass({displayName: "AComponent",
       React.createElement("div", null,
         React.createElement("h1", null, "REACTION!"),
         React.createElement("h2", null, "xxxxxxx"),
-        React.createElement(AnotherComponent, null)
+        React.createElement(AnotherComponent, null),
+        React.createElement(APIComponent, null)
       )
     )
   }
@@ -22,12 +24,26 @@ var AComponent = React.createClass({displayName: "AComponent",
 module.exports = AComponent;
 
 
-},{"./anotherComponent":3}],3:[function(require,module,exports){
+},{"./anotherComponent":3,"./apiComponent":4}],3:[function(require,module,exports){
 var AnotherComponent = React.createClass({displayName: "AnotherComponent",
   render: function() {
     return (
       React.createElement("div", null,
         React.createElement("h3", null, "this is a child componentt")
+      )
+    )
+  }
+});
+
+module.exports = AnotherComponent;
+
+
+},{}],4:[function(require,module,exports){
+var AnotherComponent = React.createClass({displayName: "AnotherComponent",
+  render: function() {
+    return (
+      React.createElement("div", null,
+        React.createElement("pre", null, "The api is: ", API)
       )
     )
   }
