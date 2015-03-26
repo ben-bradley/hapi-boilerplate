@@ -10,8 +10,7 @@ var gulp = require('gulp'),
   reactify = require('reactify'),
   nodemon = require('gulp-nodemon'),
   rename = require('gulp-rename'),
-  uglify = require('gulp-uglify'),
-  gulpif = require('gulp-if');
+  uglify = require('gulp-uglify');
 
 gulp.task('default', ['html', 'bundle', 'nodemon']);
 
