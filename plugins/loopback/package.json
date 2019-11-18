@@ -2,7 +2,7 @@
   "name": "loopback",
   "version": "0.0.1",
   "dependencies": {
-    "handlebars": "^3.0.0",
+    "handlebars": "^4.5.3",
     "lodash": "^2.4.1"
   }
 }
